@@ -1,0 +1,32 @@
+python -m torch.distributed.launch --nproc_per_node=3 --master_port=10003 run_qa.py \
+ --dataset_name  '../utils/dialdoc/dialdoc.py'\
+ --dataset_config_name doc2dial_rc \
+ --model_name_or_path roberta-large \
+ --do_train \
+ --do_eval \
+ --early_stop \
+ --early_stopping_patience 3 \
+ --version_2_with_negative \
+ --logging_steps 500 \
+ --save_steps 500 \
+ --learning_rate 3e-5  \
+ --num_train_epochs 10 \
+ --max_seq_length 512  \
+ --max_answer_length 50 \
+ --doc_stride 128  \
+ --cache_dir cache/extra2\
+ --output_dir save/roberta-large-mrqa-coqa-quac-doqa \
+ --overwrite_output_dir  \
+ --per_device_train_batch_size 1 \
+ --per_device_eval_batch_size 1 \
+ --gradient_accumulation_steps 30  \
+ --evaluation_strategy epoch \
+ --load_best_model_at_end \
+ --early_stopping_patience 3 \
+ --metric_for_best_model exact \
+ --warmup_steps 1000 \
+ --weight_decay 0.01 \
+ --fp16 \
+ --sharded_ddp \
+ --extra_dataset_name '../utils/coqa.py|../utils/quac.py|../utils/doqa.py|../utils/mrqa.py' \
+ --extra_dataset_config_name "coqa_rc|quac_rc|doqa_rc|mrqa_rc"

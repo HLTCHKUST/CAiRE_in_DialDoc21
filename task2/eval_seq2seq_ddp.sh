@@ -1,0 +1,22 @@
+python -m torch.distributed.launch --nproc_per_node=1 --master_port=10002 finetune_trainer.py \
+--cache_dir cache \
+--output_dir save/bart-large-hist3/checkpoint-4890/val \
+--doc_mode sp \
+--history_len 3 \
+--model_name_or_path save/bart-large-hist3/checkpoint-4890 \
+--do_eval \
+--per_device_eval_batch_size 4 \
+--overwrite_output_dir \
+--max_source_length 300 \
+--max_target_length 200 \
+--val_max_target_length 200 \
+--test_max_target_length 200 \
+--task translation \
+--evaluation_strategy epoch \
+--load_best_model_at_end \
+--predict_with_generate \
+--save_total_limit 5 \
+--metric_for_best_model eval_bleu \
+--greater_is_better True \
+--logging_steps 500 \
+--sharded_ddp 
