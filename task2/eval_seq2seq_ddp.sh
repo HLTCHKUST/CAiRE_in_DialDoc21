@@ -1,9 +1,9 @@
 python -m torch.distributed.launch --nproc_per_node=1 --master_port=10002 finetune_trainer.py \
 --cache_dir cache \
---output_dir save/bart-large-hist3/checkpoint-4890/val \
+--output_dir [PATH TO YOUR MODEL]/val \
 --doc_mode sp \
 --history_len 3 \
---model_name_or_path save/bart-large-hist3/checkpoint-4890 \
+--model_name_or_path [PATH TO YOUR MODEL] \
 --do_eval \
 --per_device_eval_batch_size 4 \
 --overwrite_output_dir \
