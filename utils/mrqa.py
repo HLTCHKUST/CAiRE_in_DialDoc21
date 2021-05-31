@@ -43,7 +43,7 @@ class MRQA(datasets.GeneratorBasedBuilder):
             description="Load MRQA dataset for machine reading comprehension tasks",
         ),
         datasets.BuilderConfig(
-            name="mrqa_rc_full",
+            name="mrqa_rc_small",
             version=VERSION,
             description="Load MRQA dataset for machine reading comprehension tasks",
         )
@@ -52,7 +52,7 @@ class MRQA(datasets.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = "mrqa_rc"
 
     def _info(self):
-        if self.config.name == "mrqa_rc" or self.config.name == "mrqa_rc_full":
+        if self.config.name == "mrqa_rc" or self.config.name == "mrqa_rc_small":
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
@@ -84,7 +84,7 @@ class MRQA(datasets.GeneratorBasedBuilder):
 
         # data_dir = dl_manager.download_and_extract(my_urls) 
         data_dir = YOUR_LOCAL_DOWNLOAD # point to local dir to avoid downloading the dataset again
-        if self.config.name == "mrqa_rc" or self.config.name == "mrqa_rc_full":
+        if self.config.name == "mrqa_rc" or self.config.name == "mrqa_rc_small":
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
@@ -120,9 +120,10 @@ class MRQA(datasets.GeneratorBasedBuilder):
         input query is dialog history in reversed order, and output to predict is the next agent turn."""
         
         if self.config.name == "mrqa_rc":
-            dataset_names = NAMES
-        elif self.config.name == "mrqa_rc_full":
             dataset_names = FULL
+        elif self.config.name == "mrqa_rc_small":
+            dataset_names = NAMES
+            
 
         logging.info("generating examples from = %s", filepath)
 
