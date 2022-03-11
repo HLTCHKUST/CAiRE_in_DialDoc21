@@ -6,7 +6,7 @@ sacrebleu==1.4.3
 tf-estimator-nightly==2.8.0.dev2021122109
 tensorflow-tensorboard==1.5.1
 tensorboardX==2.1
-tensorboard==2.8
+tensorboard==1.14.0
 sentencepiece==0.1.95
 datasets==1.3.0
 spacy
