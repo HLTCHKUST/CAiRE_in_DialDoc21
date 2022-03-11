@@ -1,5 +1,6 @@
 # Pretraining on MRQA dataset
-python -m torch.distributed.launch --nproc_per_node=4 --master_port=10001 run_qa.py \
+# python -m torch.distributed.launch --nproc_per_node=4 --master_port=10001 run_qa.py \
+python run_qa.py \
  --dataset_name  '../utils/mrqa.py' \
  --dataset_config_name mrqa_rc \
  --model_name_or_path roberta-large \
@@ -21,13 +22,14 @@ python -m torch.distributed.launch --nproc_per_node=4 --master_port=10001 run_qa
  --per_device_train_batch_size 2 \
  --per_device_eval_batch_size 2 \
  --gradient_accumulation_steps 30  \
- --evaluation_strategy epoch \
+ --evaluation_strategy steps \
+ --eval_steps  500 \
  --load_best_model_at_end \
  --metric_for_best_model f1 \
  --warmup_steps 1000 \
  --weight_decay 0.01 \
  --fp16 \
- --sharded_ddp 
+#  --sharded_ddp 
 
 # # Pretraining on MRQA small dataset
 # python -m torch.distributed.launch --nproc_per_node=4 --master_port=10001 run_qa.py \
