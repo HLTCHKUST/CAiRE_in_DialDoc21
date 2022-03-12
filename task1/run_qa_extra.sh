@@ -1,4 +1,4 @@
-python -m torch.distributed.launch --nproc_per_node=3 --master_port=10001 run_qa.py \
+python run_qa.py \
  --dataset_name  '../utils/dialdoc.py'\
  --dataset_config_name doc2dial_rc \
  --model_name_or_path roberta-large \
