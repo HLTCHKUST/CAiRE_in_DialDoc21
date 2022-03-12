@@ -27,6 +27,6 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port=10001 run_qa
  --warmup_steps 1000 \
  --weight_decay 0.01 \
  --fp16 \
- --sharded_ddp \
  --extra_dataset_name '../utils/coqa.py|../utils/quac.py|../utils/doqa.py' \
  --extra_dataset_config_name "coqa_rc|quac_rc|doqa_rc"
+#  --sharded_ddp \
