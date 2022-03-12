@@ -52,6 +52,6 @@ gunzip DROP.jsonl.gz
 gunzip DuoRC.jsonl.gz
 gunzip RACE.jsonl.gz
 
-cd ../coqa
+cd ../../coqa
 wget https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json -O coqa-dev-v1.0.json
-https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json -O coqa-train-v1.0.json
+wget https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json -O coqa-train-v1.0.json
