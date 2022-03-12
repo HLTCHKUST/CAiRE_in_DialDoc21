@@ -1,5 +1,6 @@
 mkdir mrqa
 mkdir coqa
+mkdir quac
 cd mrqa
 mkdir train
 mkdir dev
@@ -55,3 +56,7 @@ gunzip RACE.jsonl.gz
 cd ../../coqa
 wget https://nlp.stanford.edu/data/coqa/coqa-dev-v1.0.json -O coqa-dev-v1.0.json
 wget https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json -O coqa-train-v1.0.json
+
+cd ../quac
+wget https://s3.amazonaws.com/my89public/quac/train_v0.2.json -O train_v0.2.json
+wget https://s3.amazonaws.com/my89public/quac/val_v0.2.json -O val_v0.2.json
