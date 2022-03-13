@@ -20,13 +20,14 @@ python run_qa.py \
  --per_device_train_batch_size 2 \
  --per_device_eval_batch_size 2 \
  --gradient_accumulation_steps 30  \
- --evaluation_strategy epoch \
+ --evaluation_strategy steps \
+ --eval_steps 500 \
  --load_best_model_at_end \
  --early_stopping_patience 3 \
  --metric_for_best_model exact \
  --warmup_steps 1000 \
  --weight_decay 0.01 \
- --fp16 \
  --extra_dataset_name '../utils/coqa.py|../utils/quac.py|../utils/doqa.py' \
  --extra_dataset_config_name "coqa_rc|quac_rc|doqa_rc"
+ --fp16 \
 #  --sharded_ddp \

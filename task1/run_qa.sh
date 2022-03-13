@@ -1,4 +1,4 @@
-python -m torch.distributed.launch --nproc_per_node=3 --master_port=10003 run_qa.py \
+python run_qa.py \
  --dataset_name  '../utils/dialdoc.py'\
  --dataset_config_name doc2dial_rc \
  --model_name_or_path save/roberta-large-mrqa \
@@ -19,7 +19,8 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port=10003 run_qa
  --per_device_train_batch_size 2 \
  --per_device_eval_batch_size 2 \
  --gradient_accumulation_steps 30  \
- --evaluation_strategy epoch \
+ --evaluation_strategy steps \
+ --eval_steps 500
  --load_best_model_at_end \
  --early_stopping_patience 3 \
  --metric_for_best_model exact \
@@ -27,5 +28,5 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port=10003 run_qa
  --weight_decay 0.01 \
  --save_total_limit 5 \
  --fp16 \
- --sharded_ddp
+#  --sharded_ddp
 

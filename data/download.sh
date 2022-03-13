@@ -1,6 +1,7 @@
 mkdir mrqa
 mkdir coqa
 mkdir quac
+mkdir doqa
 cd mrqa
 mkdir train
 mkdir dev
@@ -60,3 +61,10 @@ wget https://nlp.stanford.edu/data/coqa/coqa-train-v1.0.json -O coqa-train-v1.0.
 cd ../quac
 wget https://s3.amazonaws.com/my89public/quac/train_v0.2.json -O train_v0.2.json
 wget https://s3.amazonaws.com/my89public/quac/val_v0.2.json -O val_v0.2.json
+
+
+cd ../doqa
+wget http://ixa2.si.ehu.es/convai/doqa-v2.1.zip -O doqa-v2.1.zip
+unzip doqa-v2.1.zip
+mv doqa-v2.1/doqa_dataset .
+mv doqa-v2.1/ir_scenario .
