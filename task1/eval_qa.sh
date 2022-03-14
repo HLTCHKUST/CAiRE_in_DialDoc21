@@ -15,5 +15,5 @@ python run_qa.py \
  --per_device_eval_batch_size 2  \
  --gradient_accumulation_steps 15  \
  --fp16 \
- --sharded_ddp
+#  --sharded_ddp
 
