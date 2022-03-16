@@ -25,32 +25,35 @@ import os
 import datasets
 
 MAX_Q_LEN = 100  # Max length of question
-YOUR_LOCAL_DOWNLOAD = "../dataset"  # For subtask1, Doc2Dial v1.0.1 is already included in the folder "data".
+YOUR_LOCAL_DOWNLOAD = "../dataset"  # For subtask1, MultiDoc2Dial v1.0 is already included in the folder "dataset".
 
 _CITATION = """\
-@inproceedings{feng-etal-2020-doc2dial,
-    title = "doc2dial: A Goal-Oriented Document-Grounded Dialogue Dataset",
-    author = "Feng, Song  and Wan, Hui  and Gunasekara, Chulaka  and Patel, Siva  and Joshi, Sachindra  and Lastras, Luis",
-    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
-    month = nov,
-    year = "2020",
-    publisher = "Association for Computational Linguistics",
-    url = "https://www.aclweb.org/anthology/2020.emnlp-main.652",
+@inproceedings{feng2021multidoc2dial,
+    title={MultiDoc2Dial: Modeling Dialogues Grounded in Multiple Documents},
+    author={Feng, Song and Patel, Siva Sankalp and Wan, Hui and Joshi, Sachindra},
+    booktitle={EMNLP},
+    year={2021}
 }
 """
 
-_DESCRIPTION = """ """
+_DESCRIPTION = """\
+MultiDoc2Dial is a new task and dataset on modeling goal-oriented dialogues grounded in multiple documents. \
+Most previous works treat document-grounded dialogue modeling as a machine reading comprehension task based \
+on a single given document or passage. We aim to address more realistic scenarios where a goal-oriented \
+information-seeking conversation involves multiple topics, and hence is grounded on different documents.
+"""
 
-_HOMEPAGE = "https://doc2dial.github.io/multidoc2dial/"
+_HOMEPAGE = "http://doc2dial.github.io/multidoc2dial/"
 
 
-_URLs = "https://doc2dial.github.io/file/doc2dial_v1.0.1.zip"
+_URLs = ["https://doc2dial.github.io/multidoc2dial/file/multidoc2dial.zip", "https://doc2dial.github.io/multidoc2dial/file/multidoc2dial_domain.zip"]
+
 
 
 class MultiDoc2dial(datasets.GeneratorBasedBuilder):
-    "MultiDoc2dial: A Goal-Oriented Multi-Document-Grounded Dialogue Dataset"
+    "MultiDoc2dial: A dataset on modeling goal-oriented dialogues grounded in multiple documents"
 
-    VERSION = datasets.Version("1.0.1")
+    VERSION = datasets.Version("1.0")
 
     BUILDER_CONFIGS = [
         datasets.BuilderConfig(
@@ -79,19 +82,19 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             description="This part of the dataset covers the document domain which details all the documents in the various domains",
         ),
         datasets.BuilderConfig(
-            name="doc2dial_rc",
+            name="multidoc2dial_rc",
             version=VERSION,
-            description="Load Doc2Dial dataset for machine reading comprehension tasks",
+            description="Load MultiDoc2Dial dataset for machine reading comprehension tasks",
         ),
         datasets.BuilderConfig(
-            name="doc2dial_rc_testdev",
+            name="multidoc2dial_rc_testdev",
             version=VERSION,
-            description="Load Doc2Dial dataset for machine reading comprehension tasks for testdev",
+            description="Load MultiDoc2Dial dataset for machine reading comprehension tasks for testdev",
         ),
         datasets.BuilderConfig(
-            name="doc2dial_rc_test",
+            name="multidoc2dial_rc_test",
             version=VERSION,
-            description="Load Doc2Dial dataset for machine reading comprehension tasks for test",
+            description="Load MultiDoc2Dial dataset for machine reading comprehension tasks for test",
         )
     ]
 
@@ -103,19 +106,18 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "dial_id": datasets.Value("string"),
-                    "doc_id": datasets.Value("string"),
-                    "domain": datasets.Value("string"),
                     "turns": [
                         {
-                            "turn_id": datasets.Value("int32"),
-                            "role": datasets.Value("string"),
                             "da": datasets.Value("string"),
                             "references": [
                                 {
-                                    "sp_id": datasets.Value("string"),
                                     "label": datasets.Value("string"),
+                                    "id_sp": datasets.Value("string"),
+                                    "doc_id": datasets.Value("string"),
                                 }
                             ],
+                            "role": datasets.Value("string"),
+                            "turn_id": datasets.Value("int32"),
                             "utterance": datasets.Value("string"),
                         }
                     ],
@@ -203,7 +205,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     "doc_html_raw": datasets.Value("string"),
                 }
             )
-        elif self.config.name == "doc2dial_rc":
+        elif self.config.name == "multidoc2dial_rc":
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
@@ -220,7 +222,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     "domain": datasets.Value("string"),
                 }
             )
-        elif self.config.name == "doc2dial_rc_testdev":
+        elif self.config.name == "multidoc2dial_rc_testdev":
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
@@ -230,7 +232,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     "domain": datasets.Value("string"),
                 }
             )
-        elif self.config.name == "doc2dial_rc_test":
+        elif self.config.name == "multidoc2dial_rc_test":
             features = datasets.Features(
                 {
                     "id": datasets.Value("string"),
@@ -318,7 +320,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     },
                 )
             ]
-        elif self.config.name == "doc2dial_rc":
+        elif self.config.name == "multidoc2dial_rc":
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
@@ -337,7 +339,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     },
                 ),
             ]
-        elif self.config.name == "doc2dial_rc_testdev":
+        elif self.config.name == "multidoc2dial_rc_testdev":
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
@@ -348,7 +350,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                     },
                 )
             ]
-        elif self.config.name == "doc2dial_rc_test":
+        elif self.config.name == "multidoc2dial_rc_test":
             return [
                 datasets.SplitGenerator(
                     name=datasets.Split.VALIDATION,
@@ -379,8 +381,8 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
         start, end = -1, -1
         ls_sp = []
         for ele in references:
-            sp_id = ele["sp_id"]
-            start_sp, end_sp = spans[sp_id]["start_sp"], spans[sp_id]["end_sp"]
+            id_sp = ele["id_sp"]
+            start_sp, end_sp = spans[id_sp]["start_sp"], spans[id_sp]["end_sp"]
             if start == -1 or start > start_sp:
                 start = start_sp
             if end < end_sp:
@@ -574,7 +576,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                                 ],
                             }
 
-        elif self.config.name == "doc2dial_rc":
+        elif self.config.name == "multidoc2dial_rc":
             """Load dialog data in the reading comprehension task setup, where context is the grounding document,
             input query is dialog history in reversed order, and output to predict is the next agent turn."""
 
@@ -629,7 +631,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                                     qa["answers"] = turn_to_predict["answers"]
                                 yield id_, qa
 
-        elif self.config.name == "doc2dial_rc_testdev":
+        elif self.config.name == "multidoc2dial_rc_testdev":
             """Load dialog data in the reading comprehension task setup, where context is the grounding document,
             input query is dialog history in reversed order, and output to predict is the next agent turn."""
 
@@ -667,7 +669,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                                 "domain": domain,}
                             yield id_, qa
 
-        elif self.config.name == "doc2dial_rc_test":
+        elif self.config.name == "multidoc2dial_rc_test":
             """Load dialog data in the reading comprehension task setup, where context is the grounding document,
             input query is dialog history in reversed order, and output to predict is the next agent turn."""
 
