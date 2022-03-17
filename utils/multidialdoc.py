@@ -376,8 +376,10 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             return []
         start, end = -1, -1
         ls_sp = []
+        doc_id = None
         for ele in references:
-            doc = docs[ele["doc_id"]]
+            doc_id = ele["doc_id"]
+            doc = docs[doc_id]
             spans = doc["spans"],
             doc_text = doc["doc_text"]
             
@@ -393,7 +395,7 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             "answer_start": start,
             # "spans": ls_sp
         }
-        return [answer]
+        return [answer], doc_id
 
     def _generate_examples(self, filepath):
         """This function returns the examples in the raw (text) form."""
@@ -591,11 +593,9 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                                 "\t{}: {}".format(turn["role"], turn["utterance"])
                             )
                             if "answers" not in turn:
-                                turn["answers"] = self._get_answers_rc(
+                                turn["answers"], doc_id = self._get_answers_rc(
                                     turn["references"],
                                     docs
-                                    # doc["spans"],
-                                    # doc["doc_text"],
                                 )
                             if turn["role"] == "agent":
                                 continue
@@ -614,76 +614,19 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
                             qa = {
                                 "id": id_, # For subtask1, the id should be this format.
                                 "title": doc_id,
-                                "context": doc["doc_text"],
+                                "context": docs[doc_id]["doc_text"],
                                 "question": question,
                                 "answers": [],  # For subtask1, "answers" contains the grounding annotations for evaluation.
                                 "domain": domain,
                             }
                             if "answers" not in turn_to_predict:
-                                turn_to_predict["answers"] = self._get_answers_rc(
+                                turn_to_predict["answers"], doc_id = self._get_answers_rc(
                                     turn_to_predict["references"],
-                                    doc["spans"],
-                                    doc["doc_text"],
+                                    docs
                                 )
                             if turn_to_predict["answers"]:
                                 qa["answers"] = turn_to_predict["answers"]
                             yield id_, qa
-
-
-
-
-
-
-
-
-
-
-
-                    for doc_id, dials in d_doc_dials.items():
-                        doc = doc_data[domain][doc_id]
-                        for dial in dials:
-                            all_prev_utterances = []
-                            for idx, turn in enumerate(dial["turns"]):
-                                all_prev_utterances.append(
-                                    "\t{}: {}".format(turn["role"], turn["utterance"])
-                                )
-                                if "answers" not in turn:
-                                    turn["answers"] = self._get_answers_rc(
-                                        turn["references"],
-                                        doc["spans"],
-                                        doc["doc_text"],
-                                    )
-                                if turn["role"] == "agent":
-                                    continue
-                                if idx + 1 < len(dial["turns"]):
-                                    if dial["turns"][idx + 1]["role"] == "agent":
-                                        turn_to_predict = dial["turns"][idx + 1]
-                                    else:
-                                        continue
-                                else:
-                                    continue
-                                question_str = " ".join(
-                                    list(reversed(all_prev_utterances))
-                                ).strip()
-                                question = " ".join(question_str.split()[:MAX_Q_LEN])
-                                id_ = "{}_{}".format(dial["dial_id"], turn["turn_id"]) # For subtask1, the id should be this format.
-                                qa = {
-                                    "id": id_, # For subtask1, the id should be this format.
-                                    "title": doc_id,
-                                    "context": doc["doc_text"],
-                                    "question": question,
-                                    "answers": [],  # For subtask1, "answers" contains the grounding annotations for evaluation.
-                                    "domain": domain,
-                                }
-                                if "answers" not in turn_to_predict:
-                                    turn_to_predict["answers"] = self._get_answers_rc(
-                                        turn_to_predict["references"],
-                                        doc["spans"],
-                                        doc["doc_text"],
-                                    )
-                                if turn_to_predict["answers"]:
-                                    qa["answers"] = turn_to_predict["answers"]
-                                yield id_, qa
 
         elif self.config.name == "multidoc2dial_rc_testdev":
             """Load dialog data in the reading comprehension task setup, where context is the grounding document,
