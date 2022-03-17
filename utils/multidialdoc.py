@@ -127,12 +127,10 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "dial_id": datasets.Value("string"),
-                    "doc_id": datasets.Value("string"),
-                    "domain": datasets.Value("string"),
                     "turns": [
                         {
-                            "turn_id": datasets.Value("int32"),
                             "role": datasets.Value("string"),
+                            "turn_id": datasets.Value("int32"),
                             "utterance": datasets.Value("string"),
                         }
                     ],
@@ -142,12 +140,10 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             features = datasets.Features(
                 {
                     "dial_id": datasets.Value("string"),
-                    "doc_id": datasets.Value("string"),
-                    "domain": datasets.Value("string"),
                     "turns": [
                         {
-                            "turn_id": datasets.Value("int32"),
                             "role": datasets.Value("string"),
+                            "turn_id": datasets.Value("int32"),
                             "utterance": datasets.Value("string"),
                         }
                     ],
@@ -374,13 +370,17 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             data = json.load(f)["doc_data"]
         return data
 
-    def _get_answers_rc(self, references, spans, doc_text):
+    def _get_answers_rc(self, references, docs):
         """Obtain the grounding annotation for evaluation of subtask1."""
         if not references:
             return []
         start, end = -1, -1
         ls_sp = []
         for ele in references:
+            doc = docs[ele["doc_id"]]
+            spans = doc["spans"],
+            doc_text = doc["doc_text"]
+            
             id_sp = ele["id_sp"]
             start_sp, end_sp = spans[id_sp]["start_sp"], spans[id_sp]["end_sp"]
             if start == -1 or start > start_sp:
@@ -402,17 +402,15 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             with open(filepath, encoding="utf-8") as f:
                 data = json.load(f)
                 for domain in data["dial_data"]:
-                    for doc_id in data["dial_data"][domain]:
-                        for dialogue in data["dial_data"][domain][doc_id]:
+                    for dialogue in data["dial_data"][domain]:
 
-                            x = {
-                                "dial_id": dialogue["dial_id"],
-                                "domain": domain,
-                                "doc_id": doc_id,
-                                "turns": dialogue["turns"],
-                            }
+                        x = {
+                            "dial_id": dialogue["dial_id"],
+                            "domain": domain,
+                            "turns": dialogue["turns"],
+                        }
 
-                            yield dialogue["dial_id"], x
+                        yield dialogue["dial_id"], x
 
         elif self.config.name == "dialogue_domain_testdev":
             logging.info("generating examples from = %s", filepath)
@@ -584,7 +582,63 @@ class MultiDoc2dial(datasets.GeneratorBasedBuilder):
             doc_data = self._load_doc_data_rc(filepath)
             with open(filepath, encoding="utf-8") as f:
                 dial_data = json.load(f)["dial_data"]
-                for domain, d_doc_dials in dial_data.items():
+                for domain, domain_dials in dial_data.items():
+                    docs = doc_data[domain]
+                    for dial in domain_dials:
+                        all_prev_utterances = []
+                        for idx, turn in enumerate(dial["turns"]):
+                            all_prev_utterances.append(
+                                "\t{}: {}".format(turn["role"], turn["utterance"])
+                            )
+                            if "answers" not in turn:
+                                turn["answers"] = self._get_answers_rc(
+                                    turn["references"],
+                                    docs
+                                    # doc["spans"],
+                                    # doc["doc_text"],
+                                )
+                            if turn["role"] == "agent":
+                                continue
+                            if idx + 1 < len(dial["turns"]):
+                                if dial["turns"][idx + 1]["role"] == "agent":
+                                    turn_to_predict = dial["turns"][idx + 1]
+                                else:
+                                    continue
+                            else:
+                                continue
+                            question_str = " ".join(
+                                list(reversed(all_prev_utterances))
+                            ).strip()
+                            question = " ".join(question_str.split()[:MAX_Q_LEN])
+                            id_ = "{}_{}".format(dial["dial_id"], turn["turn_id"]) # For subtask1, the id should be this format.
+                            qa = {
+                                "id": id_, # For subtask1, the id should be this format.
+                                "title": doc_id,
+                                "context": doc["doc_text"],
+                                "question": question,
+                                "answers": [],  # For subtask1, "answers" contains the grounding annotations for evaluation.
+                                "domain": domain,
+                            }
+                            if "answers" not in turn_to_predict:
+                                turn_to_predict["answers"] = self._get_answers_rc(
+                                    turn_to_predict["references"],
+                                    doc["spans"],
+                                    doc["doc_text"],
+                                )
+                            if turn_to_predict["answers"]:
+                                qa["answers"] = turn_to_predict["answers"]
+                            yield id_, qa
+
+
+
+
+
+
+
+
+
+
+
                     for doc_id, dials in d_doc_dials.items():
                         doc = doc_data[domain][doc_id]
                         for dial in dials:
