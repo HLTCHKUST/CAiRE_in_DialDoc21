@@ -8,13 +8,13 @@ This repository contains the code of CAiRE submissions for DialDoc21 shared task
 
 The implementation is mainly based on Huggingface package and Shared DDP is leveraged in the trainig process. If you use any source codes included in this toolkit in your work, please cite the following paper. The bibtex is listed below:
 <pre>
-TBD
-<!-- @article{madotto2020learning,
-  title={Learning Knowledge Bases with Parameters for Task-Oriented Dialogue Systems},
-  author={Madotto, Andrea and Cahyawijaya, Samuel and Winata, Genta Indra and Xu, Yan and Liu, Zihan and Lin, Zhaojiang and Fung, Pascale},
-  journal={arXiv preprint arXiv:2009.13656},
-  year={2020}
-} -->
+@inproceedings{xu2021caire,
+  title={CAiRE in DialDoc21: Data Augmentation for Information Seeking Dialogue System},
+  author={Xu, Yan and Ishii, Etsuko and Winata, Genta Indra and Lin, Zhaojiang and Madotto, Andrea and Liu, Zihan and Xu, Peng and Fung, Pascale},
+  booktitle={Proceedings of the 1st Workshop on Document-grounded Dialogue and Conversational Question Answering (DialDoc 2021)},
+  pages={46--51},
+  year={2021}
+}
 </pre>
 
 ## Install environment
