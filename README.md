@@ -4,7 +4,7 @@
 <img align="right" src="plot/HKUST.jpeg" width="12%">
 
 This repository contains the code of CAiRE submissions for DialDoc21 shared task:
-**CAiRE in DialDoc21: Data Augmentation for Information-Seeking Dialogue System**. [**Yan Xu**](https://yana-xuyan.github.io), **Etsuko Ishii**, [Genta Indra Winata](https://gentawinata.com/), [Zhaojiang Lin](https://zlinao.github.io/), [Andrea Madotto](https://andreamad8.github.io), [Zihan Liu](https://zliucr.github.io/), Peng Xu, Pascale Fung **DialDoc Shared Task@ACL2021** [[PDF]](TBC)
+**CAiRE in DialDoc21: Data Augmentation for Information-Seeking Dialogue System**. [**Yan Xu**](https://yana-xuyan.github.io), **Etsuko Ishii**, [Genta Indra Winata](https://gentawinata.com/), [Zhaojiang Lin](https://zlinao.github.io/), [Andrea Madotto](https://andreamad8.github.io), [Zihan Liu](https://zliucr.github.io/), Peng Xu, Pascale Fung **DialDoc Shared Task@ACL2021** [[PDF]](https://aclanthology.org/2021.dialdoc-1.6.pdf)
 
 The implementation is mainly based on Huggingface package and Shared DDP is leveraged in the trainig process. If you use any source codes included in this toolkit in your work, please cite the following paper. The bibtex is listed below:
 <pre>
