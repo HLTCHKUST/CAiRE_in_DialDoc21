@@ -87,9 +87,7 @@ cd task2
 ### Model Pre-training
 - Pre-train BART model on WoW dataset.
 
-```console
-TBC
-```
+We leverage the code of [KnowExpert](https://github.com/HLTCHKUST/KnowExpert) for the pre-training process.
 
 ### Model Fine-tuning
 - Further finetune BART model on dialdoc dataset
