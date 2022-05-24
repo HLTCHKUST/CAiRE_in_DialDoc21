@@ -10,19 +10,26 @@ import pprint
 import logging
 import numpy as np
 from tqdm import tqdm
-from operator import itemgetter
-from typing import Any, Dict, List, Optional, Tuple, Union, Iterator
+from typing import Any, Dict, List
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.worlds import create_task
 
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import transformers
 from transformers import AutoTokenizer
 
-from src.data_utils.utils import pad_sents, get_mask, pad_list_of_sents, get_list_of_mask
-from src.data_utils.data_reader import getDataLoader
+from src.data_utils.utils import pad_sents, get_mask
+
+
+def getDataLoader(dataset, bsz, test=False):
+    shuffle=False if test else True
+    # prepare dataloader
+    loader = torch.utils.data.DataLoader(dataset=dataset,
+                                         batch_size=bsz,
+                                         shuffle=shuffle)
+    return loader
 
 class DialogReader(Dataset):
     def __init__(self,
@@ -383,7 +390,7 @@ def get_data_from_batch(batch, model_type="decoder_only"):
         label_starts = torch.sum(response_masks, 1)
         label_idxs = torch.sum(label_masks, 1)
 
-    return inputs, masks, kn_sent, kn_mask, topic, topic_masks, \
+    return inputs, masks, kn_sent, kn_mask, \
         labels, label_masks, response_masks, label_starts, label_idxs, None
 
 if __name__ == "__main__":

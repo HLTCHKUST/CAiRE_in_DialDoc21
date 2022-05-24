@@ -58,6 +58,42 @@ def add_special_tokens_(tokenizer, model, decoder_only=False):
         model.resize_token_embeddings(new_num_tokens=orig_num_tokens + num_added_tokens)
 
 
+def get_lens(sents):
+    return [len(sent) for sent in sents]
+
+def get_max_len(sents):
+    max_len = max([len(sent) for sent in sents])
+    return max_len
+
+def pad_sents(sents, pad_token=0, max_len=512):
+    sents_padded = []
+    lens = get_lens(sents)
+    max_len = min(max(lens), max_len)
+    sents_padded = []
+    new_len = []
+    for i, l in enumerate(lens):
+        if l > max_len:
+            l = max_len
+        new_len.append(l)
+        sents_padded.append(sents[i][:l] + [pad_token] * (max_len - l))
+    return sents_padded, new_len
+
+def sort_sents(sents, reverse=True):
+    sents.sort(key=(lambda s: len(s)), reverse=reverse)
+    return sents
+
+
+def get_mask(sents, unmask_idx=1, mask_idx=0, max_len=512):
+    lens = get_lens(sents)
+    max_len = min(max(lens), max_len)
+    mask = []
+    for l in lens:
+        if l > max_len:
+            l = max_len
+        mask.append([unmask_idx] * l + [mask_idx] * (max_len - l))
+    return mask
+
+
 def label_smoothed_nll_loss(lprobs, target, epsilon, ignore_index=-100):
     """From fairseq"""
     if target.dim() == lprobs.dim() - 1:
@@ -103,17 +139,6 @@ def build_compute_metrics_fn(task_name: str, tokenizer: PreTrainedTokenizer) -> 
         label_str = tokenizer.batch_decode(labels, skip_special_tokens=True)
         pred_str = lmap(str.strip, pred_str)
         label_str = lmap(str.strip, label_str)
-        # with open("save/test/preds.txt", "w") as f:
-        #     for line in pred_str:
-        #         f.write(line+"\n")
-        # with open("save/test/golds.txt", "w") as f:
-        #     for line in label_str:
-        #         f.write(line+"\n")
-        # print("-"*80)
-        # for p, g in zip(pred_str, label_str):
-        #     print("gold", g)
-        #     print("pred", p)
-        #     input()
         return pred_str, label_str
 
     def summarization_metrics(pred: EvalPrediction) -> Dict:
